@@ -23,9 +23,11 @@ The application allows users to upload an MRI image and receive:
 
 ---
 
-# 🚀 Demo
+# 🚀Live Demo
 
-Coming Soon (Streamlit Deployment)
+👉 https://brain-tumor-detection-aniket.streamlit.app/
+
+
 
 ---
 
