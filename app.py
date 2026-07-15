@@ -1,6 +1,9 @@
 import streamlit as st
 import tensorflow as tf
 import numpy as np
+import time
+import plotly.express as px
+import pandas as pd
 
 from PIL import Image
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
@@ -16,9 +19,30 @@ classes = [
     "No Tumor",
     "Pituitary"
 ]
+# ---------------- Sidebar ----------------
+with st.sidebar:
+    st.header("📌 Project Information")
 
-st.title("🧠 Brain Tumor Detection using Deep Learning")
+    st.write("**Model:** MobileNetV2")
+    st.write("**Framework:** TensorFlow/Keras")
+    st.write("**Frontend:** Streamlit")
+    st.write("**Classes:** 4")
+    st.write("**Validation Accuracy:** 93.39%")
+    st.write("**Test Accuracy:** 85.19%")
 
+    st.divider()
+
+    st.write("👨‍💻 **Developer**")
+    st.write("Aniket Kumar")
+    st.write("B.Tech (AI & ML)")
+# -----------------------------------------
+
+st.title("🧠 Brain Tumor Detection")
+
+st.markdown(
+    "<h6 style='color:gray;'>TensorFlow • MobileNetV2 • Streamlit</h6>",
+    unsafe_allow_html=True
+)
 st.info(
     "Please upload a Brain MRI image (JPG, JPEG, PNG). Predictions on non-MRI images may be unreliable."
 )
@@ -34,7 +58,7 @@ to classify MRI scans into:
 """)
 
 uploaded_file = st.file_uploader(
-    "Upload MRI Image",
+    "Upload MRI Scan Image",
     type=["jpg", "jpeg", "png"]
 )
 
@@ -49,7 +73,10 @@ if uploaded_file:
     img = preprocess_input(img)
     img = np.expand_dims(img, axis=0)
 
+    start = time.time()
     prediction = model.predict(img, verbose=0)
+    end = time.time()
+    prediction_time = end - start
 
     probs = prediction[0]
 
@@ -59,6 +86,7 @@ if uploaded_file:
 
     # Analysis Result
     st.write("## Analysis Result")
+    st.caption(f"⚡ Inference Time: {prediction_time:.3f} sec")
 
     if predicted_class == "No Tumor":
 
@@ -81,7 +109,7 @@ if uploaded_file:
             Confidence Score: {confidence:.2f}%
             """
         )
-
+    
     # Confidence Bar
     st.progress(float(confidence)/100)
 
@@ -107,10 +135,33 @@ if uploaded_file:
         )
 
     # Class Probabilities
-    st.write("## Class-wise Probability")
+    st.subheader("📊 Class-wise Probability")
+    import pandas as pd
+    df = pd.DataFrame({
+        "Class": classes,
+        "Probability": [p * 100 for p in probs]
+    })
+    # Sort from highest probability to lowest
+    df = df.sort_values(by="Probability", ascending=True)
+    fig = px.bar(
+    df,
+    x="Probability",
+    y="Class",
+    orientation="h",
+    text="Probability",
+    color="Probability",
+    color_continuous_scale="Blues"
+    )
+    fig.update_traces(texttemplate='%{text:.2f}%', textposition='outside')
 
-    for cls, prob in zip(classes, probs):
-        st.write(f"**{cls}:** {prob*100:.2f}%")
+    fig.update_layout(
+        xaxis_title="Probability (%)",
+        yaxis_title="",
+        coloraxis_showscale=False,
+        height=300
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
 
     # Disclaimer
     st.warning(
@@ -124,3 +175,4 @@ if uploaded_file:
         Please consult a qualified healthcare professional for clinical evaluation.
         """
     )
+    
