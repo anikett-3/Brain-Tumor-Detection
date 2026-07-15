@@ -23,11 +23,26 @@ The application allows users to upload an MRI image and receive:
 
 ---
 
-# 🚀Live Demo
+# 🚀Live Demo 🔗 
 
 👉 https://brain-tumor-detection-aniket.streamlit.app/
 
+---
 
+### 🧪 Try the Application
+
+You can test the application using:
+
+- 📁 Sample MRI images available in the `test_images/` folder of this repository.
+- 🧠 Your own **brain MRI image** (JPG, JPEG, or PNG).
+- 🔍 Publicly available **brain MRI images** for demonstration purposes.
+
+The application will display:
+
+- ✅ Predicted Tumor Type
+- 📊 Class-wise Probability Chart
+- 🎯 Confidence Score
+- ℹ️ Basic Information about the Predicted Class
 
 ---
 
